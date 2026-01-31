@@ -2,7 +2,7 @@
   "name": "todo-api",
   "version": "1.0.0",
   "description": "A full-stack Todo application built with the MERN stack.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
@@ -22,6 +22,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^4.22.1",
+    "mongodb": "^7.0.0",
     "mongoose": "^9.1.5",
     "morgan": "^1.10.1"
   },
