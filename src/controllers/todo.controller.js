@@ -41,8 +41,11 @@ const getAllTodos = catchAsync(async (req, res, next) => {
 
 const updateTodo = catchAsync(async (req, res, next) => {
   const update = {};
-  if (req.body.title !== undefined) update.title = req.body.title;
+  if (req.body.title !== undefined) update.title = req.body.title.trim();
   if (req.body.completed !== undefined) update.completed = req.body.completed;
+
+  if (Object.keys(update).length === 0)
+    return next(new AppError("No valid fields to update", 400));
 
   const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, update, {
     new: true,
