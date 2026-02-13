@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controllers/errorController");
 const todoRouter = require("./routes/todo.routes");
 
 const app = express();
@@ -21,10 +23,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.use((err, req, res, next) => {
-  console.log(err);
-
-  res.status(500).json({ status: "error", message: "Server error" });
+app.all("*", (req, res, next) => {
+  next(new AppError("Page not found", 404));
 });
+
+app.use(globalErrorHandler);
 
 module.exports = app;

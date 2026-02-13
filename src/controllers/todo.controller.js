@@ -1,6 +1,8 @@
 const Todo = require("../models/Todo");
+const AppError = require("../utils/appError");
+const catchAsync = require("../utils/catchAsync");
 
-const createTodo = async (req, res, next) => {
+const createTodo = catchAsync(async (req, res, next) => {
   const newTodo = await Todo.create({
     title: req.body.title,
   });
@@ -11,13 +13,12 @@ const createTodo = async (req, res, next) => {
       todo: newTodo,
     },
   });
-};
+});
 
-const getATodo = async (req, res, next) => {
+const getATodo = catchAsync(async (req, res, next) => {
   const todo = await Todo.findById(req.params.id);
 
-  if (!todo)
-    return res.status(404).json({ status: "fail", message: "Todo not found" });
+  if (!todo) return next(new AppError("Todo not found", 404));
 
   res.status(200).json({
     status: "success",
@@ -25,9 +26,9 @@ const getATodo = async (req, res, next) => {
       todo,
     },
   });
-};
+});
 
-const getAllTodos = async (req, res, next) => {
+const getAllTodos = catchAsync(async (req, res, next) => {
   const todos = await Todo.find().sort({ createdAt: -1 });
 
   res.status(200).json({
@@ -36,9 +37,9 @@ const getAllTodos = async (req, res, next) => {
       todos,
     },
   });
-};
+});
 
-const updateTodo = async (req, res, next) => {
+const updateTodo = catchAsync(async (req, res, next) => {
   const update = {};
   if (req.body.title !== undefined) update.title = req.body.title;
   if (req.body.completed !== undefined) update.completed = req.body.completed;
@@ -48,8 +49,7 @@ const updateTodo = async (req, res, next) => {
     runValidators: true,
   });
 
-  if (!updatedTodo)
-    return res.status(404).json({ status: "fail", message: "Todo not found" });
+  if (!updatedTodo) return next(new AppError("Todo not found!", 404));
 
   res.status(200).json({
     status: "success",
@@ -57,16 +57,15 @@ const updateTodo = async (req, res, next) => {
       todo: updatedTodo,
     },
   });
-};
+});
 
-const deleteTodo = async (req, res, next) => {
+const deleteTodo = catchAsync(async (req, res, next) => {
   const todo = await Todo.findByIdAndDelete(req.params.id);
 
-  if (!todo)
-    return res.status(404).json({ status: "fail", message: "Todo not found" });
+  if (!todo) return next(new AppError("Todo not found!", 404));
 
   res.status(204).send();
-};
+});
 
 module.exports = {
   createTodo,
