@@ -1,4 +1,5 @@
 const Todo = require("../models/Todo");
+const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
@@ -29,40 +30,28 @@ const getATodo = catchAsync(async (req, res, next) => {
 });
 
 const getAllTodos = catchAsync(async (req, res, next) => {
-  const queryObj = { ...req.query };
-  const excludedFields = ["page", "sort", "limit"];
-  excludedFields.forEach((el) => delete queryObj[el]);
+  const features = new APIFeatures(
+    Todo.find().sort({ createdAt: -1 }),
+    req.query,
+  )
+    .filter()
+    .paginate();
 
-  if (queryObj.completed !== undefined) {
-    queryObj.completed = queryObj.completed === "true";
-  }
-
-  let query = Todo.find(queryObj).sort({
-    createdAt: -1,
-  });
-
-  // pagination
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 10;
-  const skip = (page - 1) * limit;
-
-  query = query.skip(skip).limit(limit);
-
+  // Page existence check
   if (req.query.page) {
-    const numTodos = await Todo.countDocuments(queryObj);
-    if (skip >= numTodos)
+    const total = await Todo.countDocuments(features.filterObj);
+    if (features.skip >= total) {
       return next(new AppError("This page does not exist!", 404));
+    }
   }
 
-  const todos = await query;
+  const todos = await features.query;
 
   res.status(200).json({
     status: "success",
     results: todos.length,
-    page: page,
-    data: {
-      todos,
-    },
+    page: features.page,
+    data: { todos },
   });
 });
 
