@@ -29,10 +29,37 @@ const getATodo = catchAsync(async (req, res, next) => {
 });
 
 const getAllTodos = catchAsync(async (req, res, next) => {
-  const todos = await Todo.find().sort({ createdAt: -1 });
+  const queryObj = { ...req.query };
+  const excludedFields = ["page", "sort", "limit"];
+  excludedFields.forEach((el) => delete queryObj[el]);
+
+  if (queryObj.completed !== undefined) {
+    queryObj.completed = queryObj.completed === "true";
+  }
+
+  let query = Todo.find(queryObj).sort({
+    createdAt: -1,
+  });
+
+  // pagination
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 10;
+  const skip = (page - 1) * limit;
+
+  query = query.skip(skip).limit(limit);
+
+  if (req.query.page) {
+    const numTodos = await Todo.countDocuments(queryObj);
+    if (skip >= numTodos)
+      return next(new AppError("This page does not exist!", 404));
+  }
+
+  const todos = await query;
 
   res.status(200).json({
     status: "success",
+    results: todos.length,
+    page: page,
     data: {
       todos,
     },
