@@ -1,6 +1,6 @@
 const express = require("express");
 const todoController = require("../controllers/todo.controller");
-const validateBody = require("../middlewares/validatebody");
+const validateBody = require("../middlewares/validateBody");
 
 const router = express.Router();
 
