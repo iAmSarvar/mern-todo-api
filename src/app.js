@@ -10,6 +10,9 @@ const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const todoRouter = require("./routes/todo.routes");
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./docs/swagger");
+
 const app = express();
 
 app.use(express.json());
@@ -35,6 +38,8 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Routes
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use("/api/todos", todoRouter);
 
 app.get("/api/health", (req, res) => {
