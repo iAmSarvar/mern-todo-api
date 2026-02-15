@@ -1,18 +1,125 @@
-# MERN Todo App
+MERN Todo App
 
-A full-stack Todo application built with the MERN stack.
+A production-ready RESTful Todo API built with Node.js, Express, and MongoDB.
+This project focuses on clean architecture, scalable query handling, validation, security, and API documentation.
 
-## Tech Stack
+Tech Stack
 
-- MongoDB
-- Express.js
-- React
-- Node.js
+MongoDB (Mongoose)
 
-## Project Status
+Express.js
 
-🚧 In development
+Node.js
 
-## Setup
+Swagger (OpenAPI)
 
-Instructions coming soon.
+Helmet
+
+Express Rate Limit
+
+Features
+
+Full CRUD functionality
+
+Pagination support
+
+Filtering by completed status
+
+Sorting and field limiting
+
+Total results and totalPages metadata
+
+Global error handling system
+
+Custom AppError class
+
+Async error wrapper
+
+Request body validation middleware
+
+Security middleware (Helmet, rate limiting, sanitization)
+
+Interactive Swagger API documentation
+
+API Documentation
+
+Interactive API docs available at:
+
+http://localhost:4000/api-docs
+
+Environment Variables
+
+Create a .env file based on .env.example:
+
+PORT=4000
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster>/<db>
+NODE_ENV=development
+CLIENT_ORIGIN=http://localhost:5173
+
+Setup
+
+# Clone the repository
+
+git clone https://github.com/iAmSarvar/mern-todo-api.git
+
+# Navigate into the project
+
+cd mern-todo-api
+
+# Install dependencies
+
+npm install
+
+# Create environment file
+
+cp .env.example .env
+
+# Run development server
+
+npm run dev
+
+Server runs at:
+
+http://localhost:4000
+
+Example Requests
+
+Get all todos:
+
+GET /api/todos
+
+Pagination:
+
+GET /api/todos?page=1&limit=5
+
+Filtering:
+
+GET /api/todos?completed=true
+
+Sorting:
+
+GET /api/todos?sort=-createdAt
+
+Field Limiting:
+
+GET /api/todos?fields=title,completed
+
+Project Structure
+src/
+├── controllers/
+├── routes/
+├── models/
+├── middlewares/
+├── utils/
+├── docs/
+└── app.js
+
+Project Status
+
+✅ Backend API complete
+🔜 Frontend integration coming next
+
+Author
+
+Sarvar Sultanov
+Backend Developer (Node.js / MERN)
