@@ -30,11 +30,10 @@ const getATodo = catchAsync(async (req, res, next) => {
 });
 
 const getAllTodos = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
-    Todo.find().sort({ createdAt: -1 }),
-    req.query,
-  )
+  const features = new APIFeatures(Todo.find(), req.query)
     .filter()
+    .sort()
+    .limitFields()
     .paginate();
 
   // Page existence check
