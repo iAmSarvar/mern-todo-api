@@ -36,12 +36,11 @@ const getAllTodos = catchAsync(async (req, res, next) => {
     .limitFields()
     .paginate();
 
-  // Page existence check
-  if (req.query.page) {
-    const total = await Todo.countDocuments(features.filterObj);
-    if (features.skip >= total) {
-      return next(new AppError("This page does not exist!", 404));
-    }
+  const total = await Todo.countDocuments(features.filterObj);
+  const totalPages = total === 0 ? 1 : Math.ceil(total / features.limit);
+
+  if (req.query.page && features.page > 1 && features.skip >= total) {
+    return next(new AppError("This page does not exist!", 404));
   }
 
   const todos = await features.query;
@@ -50,6 +49,8 @@ const getAllTodos = catchAsync(async (req, res, next) => {
     status: "success",
     results: todos.length,
     page: features.page,
+    total,
+    totalPages,
     data: { todos },
   });
 });
