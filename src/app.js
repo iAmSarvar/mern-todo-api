@@ -13,9 +13,12 @@ const todoRouter = require("./routes/todo.routes");
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
 app.use(helmet());
-app.use(morgan("dev"));
+
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 // rate limiting
 const limiter = rateLimit({
