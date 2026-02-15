@@ -1,6 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
@@ -10,7 +14,22 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
 app.use(morgan("dev"));
+
+// rate limiting
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 15 * 60 * 1000,
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use("/api", limiter);
+
+// data sanitization against NoSQL injection
+app.use(mongoSanitize());
+
+// data sanitization against XSS
+app.use(xss());
 
 // Routes
 app.use("/api/todos", todoRouter);
